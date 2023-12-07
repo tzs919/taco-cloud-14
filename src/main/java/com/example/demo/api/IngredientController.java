@@ -35,11 +35,11 @@ public class IngredientController {
     }
 
     @PutMapping("/{id}")
-    public void updateIngredient(@PathVariable String id, @RequestBody Ingredient ingredient) {
+    public void updateIngredient(@PathVariable Long id, @RequestBody Ingredient ingredient) {
         if (!ingredient.getId().equals(id)) {
             throw new IllegalStateException("Given ingredient's ID doesn't match the ID in the path.");
         }
-        repo.save(ingredient);
+        repo.save(ingredient).subscribe();
     }
 
     @PostMapping
@@ -56,7 +56,7 @@ public class IngredientController {
     @DeleteMapping("/{id}")
     public void deleteIngredient(@PathVariable String id) {
         repo.findBySlug(id)
-                .doOnNext(ingredient -> repo.delete(ingredient).subscribe())
+                .flatMap(ingredient -> repo.delete(ingredient))
                 .subscribe();
     }
 
